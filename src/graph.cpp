@@ -39,23 +39,22 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     }
 
     pNode newNode = new Node{index, u, v, weight, nullptr}; // Create a new edge node
+    std::cout << "Adding edge: " << u + 1 << " --> " << v + 1 << " with weight " << weight << std::endl;
 
     // Insert the new node at the correct position in the adjacency list
     if (edgeInsertMethod) {
-        // Insert at the rear (end of the list)
         if (adjList[u] == nullptr) {
-            adjList[u] = newNode;  // If the list is empty, set the first node
+            adjList[u] = newNode;
         } else {
             pNode temp = adjList[u];
             while (temp->next != nullptr) {
-                temp = temp->next;  // Traverse to the end of the list
+                temp = temp->next;
             }
-            temp->next = newNode;  // Insert the new node at the end
+            temp->next = newNode;
         }
     } else {
-        // Insert at the front (beginning of the list)
         newNode->next = adjList[u];
-        adjList[u] = newNode;  // Point the head of the list to the new node
+        adjList[u] = newNode;
     }
 
     // If the graph is undirected, add the edge in reverse direction too
@@ -78,19 +77,26 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     }
 }
 
+
 // Method to print the adjacency list for each vertex
 void Graph::printAdjList() const {
+    std::cout << "Adjacency List:" << std::endl;  // Optional header to align with expected output formatting
+
     for (int i = 0; i < numVertices; ++i) {
-        std::cout << "ADJ[" << i + 1 << "]:";
+        std::cout << "ADJ[" << i + 1 << "]:";  // Using 1-based indexing for clarity
+
         pNode current = adjList[i];
         while (current != nullptr) {
+            // Each edge is printed with the format [index destination: weight]
             std::cout << "-->[" << current->index << " " << current->v + 1 << ": "
                       << std::fixed << std::setprecision(2) << current->weight << "]";
             current = current->next;
         }
-        std::cout << std::endl;  // Ensures each vertex's adjacency list is on a new line
+
+        std::cout << std::endl;  // Ensure each vertex's adjacency list is on a new line
     }
-    std::cout << std::endl;  // Adds the required newline at the end of the output
+
+    std::cout << std::endl;  // Additional newline to match output formatting
 }
 
 

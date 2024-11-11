@@ -3,90 +3,37 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <limits>  // For DBL_MAX
 
-using namespace std;
+int main() {
+    // Create a graph with 8 vertices, directed, and edge insert method as true (insert at rear)
+    Graph graph(8, true, true);
 
-// Function to load the graph from an input file
-void loadGraphFromFile(const string& filename, Graph& g) {
-    ifstream file(filename);
-    string line;
+    // Open the file that contains graph data (change to your file's path)
+    std::ifstream file("graph_data.txt");
 
-    if (!file) {
-        cerr << "Error opening file!" << endl;
-        return;
-    }
-
-    // Read the number of vertices and edges
-    int n, m;
-    if (getline(file, line)) {
-        stringstream ss(line);
-        ss >> n >> m;
-        g = Graph(n); // Initialize graph with n vertices
-    }
-
-    // Read each edge from the file
-    int index, u, v;
-    double weight;
-    while (getline(file, line)) {
-        stringstream ss(line);
-        if (ss >> index >> u >> v >> weight) {
-            g.addEdge(index, u - 1, v - 1, weight); // Adjust to 0-based indexing
-        } else {
-            cerr << "Ignoring invalid line: " << line << endl;
-        }
-    }
-
-    file.close();
-}
-
-// Main program
-int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        cerr << "Usage: ./graphApp <InputFile> <GraphType> <Flag>" << endl;
+    if (!file.is_open()) {
+        std::cerr << "Error opening file." << std::endl;
         return 1;
     }
 
-    string inputFile = argv[1];
-    bool isDirected = (string(argv[2]) == "Directed");
-    bool flag = (string(argv[3]) == "1");
+    std::string line;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        int index, u, v;
+        double weight;
 
-    Graph g(8); // Default initialization, will be re-assigned in loadGraphFromFile
-    loadGraphFromFile(inputFile, g);
-
-    cout << "Adjacency List:" << endl;
-    g.printAdjList();
-
-    string command;
-    cout << "Enter command: ";
-    while (getline(cin, command)) {
-        if (command == "STOP") {
-            cout << "Stopping program." << endl;
-            break;
-        } else if (command == "printAdjList") {
-            g.printAdjList();
+        // Read the data for each edge in the file (index, u, v, weight)
+        if (iss >> index >> u >> v >> weight) {
+            // Add the edge to the graph (use the appropriate indices and weight)
+            graph.addEdge(index, u - 1, v - 1, weight);  // Assuming 1-based indexing in the file
         }
-
-//        else if (command.rfind("SinglePair", 0) == 0) {
-//            // Parse the SinglePair command
-//            stringstream ss(command);
-//            string cmd;
-//            int source, destination;
-//            ss >> cmd >> source >> destination;
-//
-//            if (source >= 1 && source <= g.numVertices() && destination >= 1 && destination <= g.numVertices()) {
-//                g.singlePairDijkstra(source - 1, destination - 1);  // Adjust for 0-based indexing
-//                g.printSinglePairPath(source - 1, destination - 1); // Assuming a method to print the path
-//            } else {
-//                cerr << "Invalid source or destination." << endl;
-//            }
-//        }
-
-        else {
-            cerr << "Invalid instruction." << endl;
-        }
-        cout << "Enter command: ";
     }
+
+    // Close the file after reading
+    file.close();
+
+    // Print the adjacency list of the graph
+    graph.printAdjList();
 
     return 0;
 }
