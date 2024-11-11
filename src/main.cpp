@@ -1,89 +1,50 @@
-#include "graph.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <limits>
+#include "graph.h"
+#include <queue>
+#include <vector>
 
-using namespace std;
+// Define DBL_MAX to represent infinity
+#include <cfloat>
 
-// Function to load the graph from the input file
-void loadGraphFromFile(const string& filename, Graph& g) {
-    ifstream file(filename);
-    string line;
+// Main function to handle input commands and call the appropriate methods
+int main() {
+    // Example of initializing graph
+    int numVertices = 5;  // Example graph with 5 vertices
+    Graph graph(numVertices);
 
-    if (!file) {
-        cerr << "Error opening file!" << endl;
-        return;
+    // Load edges from the file
+    std::ifstream file("network01.txt");
+    std::string line;
+    int index = 0;
+
+    while (std::getline(file, line)) {
+        std::istringstream ss(line);
+        int u, v;
+        double weight;
+        ss >> u >> v >> weight;
+        graph.addEdge(index++, u - 1, v - 1, weight);  // Assuming 1-based input, convert to 0-based
     }
 
-    // Read the number of vertices and edges
-    int n, m;
-    if (getline(file, line)) {
-        stringstream ss(line);
-        ss >> n >> m;
-        // Initialize the graph with the given number of vertices
-        g = Graph(n);
-    }
+    // Handle commands
+    std::string command;
 
-    // Read each edge from the file
-    int index, u, v;
-    double weight;
-    while (getline(file, line)) {
-        // Print the line for debugging purposes
-        cout << "Reading line: " << line << endl;
+    while (true) {
+        std::cout << "Enter command: ";
+        std::cin >> command;
 
-        stringstream ss(line);
-
-        // Check if the line contains exactly 4 elements: index u v weight
-        if (ss >> index >> u >> v >> weight) {
-            // Print parsed values for debugging
-            cout << "Parsed values: index=" << index << " u=" << u << " v=" << v << " weight=" << weight << endl;
-
-            // Convert from 1-indexed to 0-indexed if needed
-            u--; // Convert u from 1-indexed to 0-indexed
-            v--; // Convert v from 1-indexed to 0-indexed
-
-            // Check if vertex indices are valid
-            if (u >= 0 && u < n && v >= 0 && v < n) {
-                // Add the edge to the graph
-                g.addEdge(index, u, v, weight);
-                cout << "Edge added: " << index << " (" << u + 1 << ", " << v + 1 << ", " << weight << ")" << endl;
-            } else {
-                cerr << "Error: Invalid vertex index (" << u + 1 << ", " << v + 1 << "). Skipping line: " << line << endl;
-            }
+        if (command == "Stop") {
+            break;
+        } else if (command == "printAdjList") {
+            graph.printAdjList();
         } else {
-            // Handle invalid lines (non-edge lines) more gracefully
-            cerr << "Ignoring invalid line: " << line << endl;
+            std::cerr << "Invalid instruction." << std::endl;
         }
     }
 
     file.close();
-}
-
-
-
-int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        cerr << "Usage: ./graphApp <InputFile> <GraphType> <Flag>" << endl;
-        return 1;
-    }
-
-    string inputFile = argv[1];
-    bool isDirected = (string(argv[2]) == "Directed");
-    bool flag = (string(argv[3]) == "1");
-
-    // Initialize the graph (adjust for number of vertices and edges)
-    Graph g(8); // Example: 8 vertices for your case
-
-    // Load the graph from the file
-    loadGraphFromFile(inputFile, g);
-
-    // Print the adjacency list and graph structure
-    cout << "Adjacency List:" << endl;
-    g.printAdjList();
-
-    cout << "Entire Graph:" << endl;
-    g.printGraph();
-
     return 0;
 }

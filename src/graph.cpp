@@ -1,6 +1,9 @@
 #include "graph.h"
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <stack>
+#include <cfloat>
 
 // Constructor: Initializes the graph with 'n' vertices and options for directed graph and edge insertion method
 Graph::Graph(int n, bool isDirected, bool edgeInsertMethod)
@@ -19,6 +22,13 @@ Graph::~Graph() {
         }
     }
 }
+
+
+
+
+
+
+
 
 // Method to add an edge to the graph
 void Graph::addEdge(int index, int u, int v, double weight) {
@@ -80,14 +90,10 @@ void Graph::printAdjList() const {
     }
 }
 
-// Method to print the entire graph (all vertices and their connected edges)
-void Graph::printGraph() const {
-    for (int i = 0; i < numVertices; ++i) {
-        pNode current = adjList[i];
-        while (current != nullptr) {
-            std::cout << "Edge " << current->index << ": ";
-            std::cout << "(" << current->u << ", " << current->v << ", " << current->weight << ")" << std::endl;
-            current = current->next;
-        }
-    }
-}
+
+
+
+
+
+
+
