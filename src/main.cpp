@@ -1,50 +1,92 @@
+#include "graph.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <limits>
-#include "graph.h"
-#include <queue>
-#include <vector>
+#include <limits>  // For DBL_MAX
 
-// Define DBL_MAX to represent infinity
-#include <cfloat>
+using namespace std;
 
-// Main function to handle input commands and call the appropriate methods
-int main() {
-    // Example of initializing graph
-    int numVertices = 5;  // Example graph with 5 vertices
-    Graph graph(numVertices);
+// Function to load the graph from an input file
+void loadGraphFromFile(const string& filename, Graph& g) {
+    ifstream file(filename);
+    string line;
 
-    // Load edges from the file
-    std::ifstream file("network01.txt");
-    std::string line;
-    int index = 0;
-
-    while (std::getline(file, line)) {
-        std::istringstream ss(line);
-        int u, v;
-        double weight;
-        ss >> u >> v >> weight;
-        graph.addEdge(index++, u - 1, v - 1, weight);  // Assuming 1-based input, convert to 0-based
+    if (!file) {
+        cerr << "Error opening file!" << endl;
+        return;
     }
 
-    // Handle commands
-    std::string command;
+    // Read the number of vertices and edges
+    int n, m;
+    if (getline(file, line)) {
+        stringstream ss(line);
+        ss >> n >> m;
+        g = Graph(n); // Initialize graph with n vertices
+    }
 
-    while (true) {
-        std::cout << "Enter command: ";
-        std::cin >> command;
-
-        if (command == "Stop") {
-            break;
-        } else if (command == "printAdjList") {
-            graph.printAdjList();
+    // Read each edge from the file
+    int index, u, v;
+    double weight;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        if (ss >> index >> u >> v >> weight) {
+            g.addEdge(index, u - 1, v - 1, weight); // Adjust to 0-based indexing
         } else {
-            std::cerr << "Invalid instruction." << std::endl;
+            cerr << "Ignoring invalid line: " << line << endl;
         }
     }
 
     file.close();
+}
+
+// Main program
+int main(int argc, char* argv[]) {
+    if (argc != 4) {
+        cerr << "Usage: ./graphApp <InputFile> <GraphType> <Flag>" << endl;
+        return 1;
+    }
+
+    string inputFile = argv[1];
+    bool isDirected = (string(argv[2]) == "Directed");
+    bool flag = (string(argv[3]) == "1");
+
+    Graph g(8); // Default initialization, will be re-assigned in loadGraphFromFile
+    loadGraphFromFile(inputFile, g);
+
+    cout << "Adjacency List:" << endl;
+    g.printAdjList();
+
+    string command;
+    cout << "Enter command: ";
+    while (getline(cin, command)) {
+        if (command == "STOP") {
+            cout << "Stopping program." << endl;
+            break;
+        } else if (command == "printAdjList") {
+            g.printAdjList();
+        }
+
+//        else if (command.rfind("SinglePair", 0) == 0) {
+//            // Parse the SinglePair command
+//            stringstream ss(command);
+//            string cmd;
+//            int source, destination;
+//            ss >> cmd >> source >> destination;
+//
+//            if (source >= 1 && source <= g.numVertices() && destination >= 1 && destination <= g.numVertices()) {
+//                g.singlePairDijkstra(source - 1, destination - 1);  // Adjust for 0-based indexing
+//                g.printSinglePairPath(source - 1, destination - 1); // Assuming a method to print the path
+//            } else {
+//                cerr << "Invalid source or destination." << endl;
+//            }
+//        }
+
+        else {
+            cerr << "Invalid instruction." << endl;
+        }
+        cout << "Enter command: ";
+    }
+
     return 0;
 }

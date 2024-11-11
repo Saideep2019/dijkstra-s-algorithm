@@ -4,6 +4,7 @@
 #include <queue>
 #include <stack>
 #include <cfloat>
+#include <iomanip>
 
 // Constructor: Initializes the graph with 'n' vertices and options for directed graph and edge insertion method
 Graph::Graph(int n, bool isDirected, bool edgeInsertMethod)
@@ -80,14 +81,16 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 // Method to print the adjacency list for each vertex
 void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; ++i) {
-        std::cout << "Vertex " << i << ": ";
+        std::cout << "ADJ[" << i + 1 << "]:";
         pNode current = adjList[i];
         while (current != nullptr) {
-            std::cout << "(" << current->u << ", " << current->v << ", " << current->weight << ") -> ";
+            std::cout << "-->[" << current->index << " " << current->v + 1 << ": "
+                      << std::fixed << std::setprecision(2) << current->weight << "]";
             current = current->next;
         }
-        std::cout << "nullptr" << std::endl;
+        std::cout << std::endl;  // Ensures each vertex's adjacency list is on a new line
     }
+    std::cout << std::endl;  // Adds the required newline at the end of the output
 }
 
 
