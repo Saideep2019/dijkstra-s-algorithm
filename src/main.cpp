@@ -9,7 +9,7 @@ int main() {
     Graph graph(8, true, true);
 
     // Open the file that contains graph data (change to your file's path)
-    std::ifstream file("graph_data.txt");
+    std::ifstream file("network01.txt");
 
     if (!file.is_open()) {
         std::cerr << "Error opening file." << std::endl;
