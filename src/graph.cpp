@@ -32,12 +32,12 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
-    // Create the new node for the edge u -> v
+    // Create a new node for the edge u -> v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert the new node in sorted order for adjacency list of u
+    // Insert the new node in sorted order in adjacency list of u
     if (adjList[u] == nullptr || adjList[u]->v > v) {
-        // Insert at the beginning if the list is empty or if the first node has a larger v
+        // Insert at the beginning if list is empty or the first node's 'v' is larger
         newNode->next = adjList[u];
         adjList[u] = newNode;
     } else {
@@ -54,7 +54,7 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
 
-        // Insert the reverse node for the adjacency list of v in sorted order
+        // Insert the reverse node for adjacency list of v in sorted order
         if (adjList[v] == nullptr || adjList[v]->v > u) {
             reverseNode->next = adjList[v];
             adjList[v] = reverseNode;
@@ -68,6 +68,7 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         }
     }
 }
+
 
 // Method to print the adjacency list for each vertex with exact formatting
 
