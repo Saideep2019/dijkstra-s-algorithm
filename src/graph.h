@@ -1,32 +1,23 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include <iostream>
 #include <vector>
+#include <list>
+#include <queue>
+#include <climits>
 
 class Graph {
 public:
-    struct Node {
-        int index;      // Edge index
-        int u, v;       // Source (u) and destination (v) vertices
-        double weight;  // Edge weight
-        Node* next;     // Pointer to the next node in the list
-    };
-
-    typedef Node* pNode;  // Define pNode as a pointer to Node
-
-    // Constructor and Destructor
-    Graph(int n, bool isDirected, bool edgeInsertMethod);  // Constructor declaration
-    ~Graph();
-
-    // Methods to add edges and print the adjacency list
-    void addEdge(int index, int u, int v, double weight);
-    void printAdjList() const;
+    Graph(int vertices, bool directed = false);  // Constructor for graph with number of vertices
+    void addEdge(int u, int v, double weight);   // Method to add an edge
+    void printAdjList() const;                    // Method to print adjacency list
+    void shortestPath(int startVertex);           // Method to calculate shortest path
 
 private:
-    int numVertices;            // Number of vertices in the graph
-    bool isDirected;            // Whether the graph is directed
-    bool edgeInsertMethod;      // Whether to insert edges in sorted order
-    std::vector<pNode> adjList; // Adjacency list represented as a vector of Node pointers
+    int numVertices;  // The number of vertices in the graph
+    bool isDirected;  // Whether the graph is directed or not
+    std::vector<std::list<std::pair<int, double>>> adjList;  // Adjacency list of the graph
 };
 
-#endif // GRAPH_H
+#endif

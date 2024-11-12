@@ -5,8 +5,8 @@
 #include <string>
 
 int main() {
-    // Create a graph with 8 vertices, directed, and edge insert method as true (insert at rear)
-    Graph graph(8, true, true);
+    // Create a graph with 8 vertices, directed graph, and edge insert method as true (insert at rear)
+    Graph graph(8, true);  // 'true' for directed graph, 'false' for undirected (adjust as needed)
 
     // Open the file that contains graph data (change to your file's path)
     std::ifstream file("network01.txt");
@@ -24,8 +24,8 @@ int main() {
 
         // Read the data for each edge in the file (index, u, v, weight)
         if (iss >> index >> u >> v >> weight) {
-            // Add the edge to the graph (use the appropriate indices and weight)
-            graph.addEdge(index, u - 1, v - 1, weight);  // Assuming 1-based indexing in the file
+            // Add the edge to the graph (adjusting for 1-based indexing from file to 0-based internal indexing)
+            graph.addEdge(u - 1, v - 1, weight);  // Assuming 1-based indexing in the file
         }
     }
 
