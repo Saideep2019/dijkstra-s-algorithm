@@ -13,7 +13,7 @@ public:
     };
 
     typedef Node* pNode;  // Define pNode as a pointer to Node
-
+    int numVertices;
     // Constructor and Destructor
     Graph(int n, bool isDirected, bool edgeInsertMethod);  // Constructor declaration
     ~Graph();

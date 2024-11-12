@@ -1,30 +1,46 @@
-
-#include "graph.h"
 #include <iostream>
 #include <iomanip>
-#include <vector>
-#include <algorithm>
 
-// Method to add an edge to the graph with controlled ordering
+class Graph {
+private:
+    struct Node {
+        int index;
+        int u, v;
+        double weight;
+        Node* next;
+    };
+    using pNode = Node*;
 
-Graph::Graph(int n, bool isDirected, bool edgeInsertMethod)
-    : numVertices(n), isDirected(isDirected), edgeInsertMethod(edgeInsertMethod) {
-    adjList.resize(numVertices, nullptr); // Initialize adjacency list with 'n' null pointers
+    int numVertices;       // Number of vertices in the graph
+    pNode* adjList;        // Array of pointers to nodes (adjacency list)
+
+    bool isDirected;       // Indicates if the graph is directed or undirected
+
+public:
+    Graph(int numVertices, bool isDirected = false);  // Constructor
+    ~Graph();                                         // Destructor to free memory
+
+    void addEdge(int index, int u, int v, double weight);
+    void printGraph() const;
+};
+
+// Constructor
+Graph::Graph(int numVertices, bool isDirected) : numVertices(numVertices + 1), isDirected(isDirected) {
+    adjList = new pNode[this->numVertices]{};  // Initialize adjacency list array with adjusted size
 }
 
-
-// Destructor
+// Destructor to free memory
 Graph::~Graph() {
     for (int i = 0; i < numVertices; ++i) {
-        pNode current = adjList[i];
-        while (current != nullptr) {
-            pNode temp = current;
-            current = current->next;
-            delete temp; // Free each node in the adjacency list
+        pNode temp = adjList[i];
+        while (temp != nullptr) {
+            pNode next = temp->next;
+            delete temp;
+            temp = next;
         }
     }
+    delete[] adjList;
 }
-
 
 void Graph::addEdge(int index, int u, int v, double weight) {
     if (u >= numVertices || v >= numVertices) {
@@ -32,16 +48,14 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
-    // Create a new node for the edge u -> v
+    // Create a new node for edge u -> v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert the new node in sorted order in adjacency list of u
+    // Insert the new node in sorted order for adjacency list of u
     if (adjList[u] == nullptr || adjList[u]->v > v) {
-        // Insert at the beginning if list is empty or the first node's 'v' is larger
         newNode->next = adjList[u];
         adjList[u] = newNode;
     } else {
-        // Find the correct position and insert in sorted order
         pNode temp = adjList[u];
         while (temp->next != nullptr && temp->next->v < v) {
             temp = temp->next;
@@ -54,7 +68,6 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
 
-        // Insert the reverse node for adjacency list of v in sorted order
         if (adjList[v] == nullptr || adjList[v]->v > u) {
             reverseNode->next = adjList[v];
             adjList[v] = reverseNode;
@@ -69,16 +82,13 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     }
 }
 
-
-// Method to print the adjacency list for each vertex with exact formatting
-
-
-void Graph::printAdjList() const {
-    for (int i = 1; i < numVertices; ++i) {  // Start from 1 instead of 0
+void Graph::printGraph() const {
+    for (int i = 1; i < numVertices; ++i) {  // Start from index 1 for output consistency
         std::cout << "ADJ[" << i << "]:";
         pNode temp = adjList[i];
         while (temp != nullptr) {
-            std::cout << "-->[" << temp->u << " " << temp->v << ": " << std::fixed << std::setprecision(2) << temp->weight << "]";
+            std::cout << "-->[" << temp->u << " " << temp->v << ": "
+                      << std::fixed << std::setprecision(2) << temp->weight << "]";
             temp = temp->next;
         }
         std::cout << std::endl;
