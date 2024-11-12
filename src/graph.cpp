@@ -54,26 +54,20 @@ void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
-        // Sort the adjacency list to print edges in the expected order
-        std::vector<pNode> edges;
         pNode temp = adjList[i];
+        std::vector<pNode> edges;
 
-        // Collect all edges
+        // Collect all edges for vertex i
         while (temp != nullptr) {
             edges.push_back(temp);
             temp = temp->next;
         }
 
-        // Sort the edges based on the destination vertex (v)
-        std::sort(edges.begin(), edges.end(), [](const pNode& a, const pNode& b) {
-            return a->v < b->v;
-        });
-
-        // Print sorted edges
+        // Print edges for the current vertex
         for (size_t j = 0; j < edges.size(); j++) {
             std::cout << "[" << edges[j]->u + 1 << " " << edges[j]->v + 1 << ": ";
 
-            // Print the weight with 2 decimal places if necessary
+            // Print the weight without decimals if it's a whole number
             if (edges[j]->weight == int(edges[j]->weight)) {
                 std::cout << int(edges[j]->weight);  // Print as integer if weight is a whole number
             } else {
@@ -85,7 +79,9 @@ void Graph::printAdjList() const {
                 std::cout << "-->";
             }
         }
+
         std::cout << std::endl;
     }
 }
+
 
