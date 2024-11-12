@@ -47,31 +47,35 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 }
 
 // Method to print the adjacency list for each vertex with exact formatting
-void Graph::printAdjList() const {
-    std::cout << "Adjacency List:" << std::endl;
-
+void Graph::printAdjList() {
     for (int i = 0; i < numVertices; i++) {
-        std::cout << "ADJ[" << i + 1 << "]:";
+        std::cout << "ADJ[" << i + 1 << "]:-->";
 
-        // Collect all edges for the current vertex
+        // Sort the adjacency list to print edges in the expected order
         std::vector<pNode> edges;
         pNode temp = adjList[i];
+
+        // Collect all edges
         while (temp != nullptr) {
             edges.push_back(temp);
             temp = temp->next;
         }
 
-        // Sort edges based on the destination vertex (v)
+        // Sort the edges based on the destination vertex (v)
         std::sort(edges.begin(), edges.end(), [](const pNode& a, const pNode& b) {
             return a->v < b->v;
         });
 
-        // Print all sorted edges
-        for (const auto& edge : edges) {
-            std::cout << " -->[" << edge->u + 1 << " " << edge->v + 1 << ": "
-                      << std::fixed << std::setprecision(2) << edge->weight << "]";
+        // Print sorted edges
+        for (size_t j = 0; j < edges.size(); j++) {
+            std::cout << "[" << edges[j]->u + 1 << " " << edges[j]->v + 1 << ": "
+                      << std::fixed << std::setprecision(2) << edges[j]->weight << "]";
+            if (j != edges.size() - 1) {
+                std::cout << "-->";
+            }
         }
         std::cout << std::endl;
     }
 }
+
 
