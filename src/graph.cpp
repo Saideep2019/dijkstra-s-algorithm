@@ -31,17 +31,36 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
+    // Create the new node for the edge
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert the new node at the beginning
-    newNode->next = adjList[u];
-    adjList[u] = newNode;
+    // Insert the new node in sorted order by destination vertex (v)
+    if (adjList[u] == nullptr) {
+        adjList[u] = newNode;
+    } else {
+        pNode temp = adjList[u];
+        // Traverse to find the correct insertion point
+        while (temp->next != nullptr && temp->next->v < v) {
+            temp = temp->next;
+        }
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
 
-    // Add reverse edge for undirected graphs
+    // If the graph is undirected, add the reverse edge
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
-        reverseNode->next = adjList[v];
-        adjList[v] = reverseNode;
+        if (adjList[v] == nullptr) {
+            adjList[v] = reverseNode;
+        } else {
+            pNode temp = adjList[v];
+            // Traverse to find the correct insertion point for the reverse edge
+            while (temp->next != nullptr && temp->next->v < u) {
+                temp = temp->next;
+            }
+            reverseNode->next = temp->next;
+            temp->next = reverseNode;
+        }
     }
 }
 
@@ -49,7 +68,6 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 
 // Method to print the adjacency list for each vertex with exact formatting
 void Graph::printAdjList() const {
-    std::cout << "Adjacency List:" << std::endl;
     for (int i = 0; i < numVertices; ++i) {
         std::cout << "ADJ[" << i + 1 << "]: ";  // Use 1-based indexing for vertex print
         pNode current = adjList[i];
