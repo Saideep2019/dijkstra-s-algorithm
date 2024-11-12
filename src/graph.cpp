@@ -31,36 +31,18 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
-    // Create the new node for edge u -> v
+    // Create a new node for edge u -> v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert in sorted order by destination vertex
-    if (adjList[u] == nullptr || adjList[u]->v > v) {
-        newNode->next = adjList[u];
-        adjList[u] = newNode;
-    } else {
-        pNode temp = adjList[u];
-        while (temp->next != nullptr && temp->next->v < v) {
-            temp = temp->next;
-        }
-        newNode->next = temp->next;
-        temp->next = newNode;
-    }
+    // Insert the new node at the beginning of the adjacency list for u
+    newNode->next = adjList[u - 1];
+    adjList[u - 1] = newNode;
 
-    // If undirected, add reverse edge v -> u
+    // If the graph is undirected, also add the reverse edge v -> u
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
-        if (adjList[v] == nullptr || adjList[v]->v > u) {
-            reverseNode->next = adjList[v];
-            adjList[v] = reverseNode;
-        } else {
-            pNode temp = adjList[v];
-            while (temp->next != nullptr && temp->next->v < u) {
-                temp = temp->next;
-            }
-            reverseNode->next = temp->next;
-            temp->next = reverseNode;
-        }
+        reverseNode->next = adjList[v - 1];
+        adjList[v - 1] = reverseNode;
     }
 }
 
