@@ -47,7 +47,10 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 }
 
 // Method to print the adjacency list for each vertex with exact formatting
-void Graph::printAdjList() const {
+#include <iostream>
+#include <iomanip>  // For std::setprecision and std::fixed
+
+void Graph::printAdjList() {
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
@@ -68,8 +71,16 @@ void Graph::printAdjList() const {
 
         // Print sorted edges
         for (size_t j = 0; j < edges.size(); j++) {
-            std::cout << "[" << edges[j]->u + 1 << " " << edges[j]->v + 1 << ": "
-                      << std::fixed << std::setprecision(2) << edges[j]->weight << "]";
+            std::cout << "[" << edges[j]->u + 1 << " " << edges[j]->v + 1 << ": ";
+
+            // Print the weight with 2 decimal places if necessary
+            if (edges[j]->weight == int(edges[j]->weight)) {
+                std::cout << int(edges[j]->weight);  // Print as integer if weight is a whole number
+            } else {
+                std::cout << std::fixed << std::setprecision(2) << edges[j]->weight;  // Otherwise, print with two decimal places
+            }
+
+            std::cout << "]";
             if (j != edges.size() - 1) {
                 std::cout << "-->";
             }
