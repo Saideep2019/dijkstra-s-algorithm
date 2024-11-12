@@ -32,6 +32,8 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     }
 
     pNode newNode = new Node{index, u, v, weight, nullptr};
+
+    // Insert the new node at the beginning
     newNode->next = adjList[u];
     adjList[u] = newNode;
 
@@ -44,26 +46,18 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 }
 
 
+
 // Method to print the adjacency list for each vertex with exact formatting
 void Graph::printAdjList() const {
     std::cout << "Adjacency List:" << std::endl;
-
     for (int i = 0; i < numVertices; ++i) {
-        std::cout << "ADJ[" << i + 1 << "]:";
-
+        std::cout << "ADJ[" << i + 1 << "]: ";  // Use 1-based indexing for vertex print
         pNode current = adjList[i];
-        if (current == nullptr) {
-            std::cout << std::endl;  // Print empty line for vertices with no edges
-            continue;
-        }
-
         while (current != nullptr) {
-            // Each edge is printed as [index destination: weight] with fixed precision
-            std::cout << "-->[" << current->index << " " << current->v + 1 << ": "
-                      << std::fixed << std::setprecision(2) << current->weight << "]";
+            std::cout << "-->[" << current->u + 1 << " " << current->v + 1 << ": " << std::fixed << std::setprecision(2) << current->weight << "]";
             current = current->next;
         }
         std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
+
