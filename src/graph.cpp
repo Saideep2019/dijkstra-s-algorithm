@@ -71,18 +71,28 @@ void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
+        // Temporary vector to hold the edges of the current vertex
+        std::vector<pNode> edges;
         pNode temp = adjList[i];
+
         while (temp != nullptr) {
-            std::cout << "[" << temp->u + 1 << " " << temp->v + 1 << ": ";
+            edges.push_back(temp);
+            temp = temp->next;
+        }
 
-            // Use fixed-point notation with exactly two decimal places
-            std::cout << std::fixed << std::setprecision(2) << temp->weight;
+        // Sort the edges, you can sort by the destination vertex (temp->v) or by weight
+        std::sort(edges.begin(), edges.end(), [](const pNode& a, const pNode& b) {
+            return a->v < b->v;  // Sort by the destination vertex 'v'
+        });
+
+        // Print sorted edges
+        for (size_t j = 0; j < edges.size(); ++j) {
+            std::cout << "[" << edges[j]->u + 1 << " " << edges[j]->v + 1 << ": ";
+            std::cout << std::fixed << std::setprecision(2) << edges[j]->weight;
             std::cout << "]";
-
-            if (temp->next != nullptr) {
+            if (j < edges.size() - 1) {
                 std::cout << "-->";
             }
-            temp = temp->next;
         }
 
         std::cout << std::endl;
