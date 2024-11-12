@@ -31,18 +31,16 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
-    // Adjust u and v to 0-based indexing for internal use
-    u--; v--;
-
     // Create the new node for edge u -> v
-    pNode newNode = new Node{index, u + 1, v + 1, weight, nullptr};
+    pNode newNode = new Node{index, u, v, weight, nullptr};
 
+    // Insert the new node based on the edgeInsertMethod
     if (edgeInsertMethod) {
         // Insert at rear
-        if (!adjList[u]) {
-            adjList[u] = newNode;
+        if (!adjList[u-1]) {
+            adjList[u-1] = newNode;
         } else {
-            pNode current = adjList[u];
+            pNode current = adjList[u-1];
             while (current->next) {
                 current = current->next;
             }
@@ -50,19 +48,19 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         }
     } else {
         // Insert at front
-        newNode->next = adjList[u];
-        adjList[u] = newNode;
+        newNode->next = adjList[u-1];
+        adjList[u-1] = newNode;
     }
 
     // If the graph is undirected, also add the reverse edge v -> u
     if (!isDirected) {
-        pNode reverseNode = new Node{index, v + 1, u + 1, weight, nullptr};
+        pNode reverseNode = new Node{index, v, u, weight, nullptr};
         if (edgeInsertMethod) {
             // Insert at rear
-            if (!adjList[v]) {
-                adjList[v] = reverseNode;
+            if (!adjList[v-1]) {
+                adjList[v-1] = reverseNode;
             } else {
-                pNode current = adjList[v];
+                pNode current = adjList[v-1];
                 while (current->next) {
                     current = current->next;
                 }
@@ -70,12 +68,11 @@ void Graph::addEdge(int index, int u, int v, double weight) {
             }
         } else {
             // Insert at front
-            reverseNode->next = adjList[v];
-            adjList[v] = reverseNode;
+            reverseNode->next = adjList[v-1];
+            adjList[v-1] = reverseNode;
         }
     }
 }
-
 
 // Method to print the adjacency list for each vertex with exact formatting
 
