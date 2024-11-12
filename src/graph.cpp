@@ -73,6 +73,32 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 // Method to print the adjacency list for each vertex with exact formatting
 
 
+void Graph::sortAdjList() {
+    for (int i = 1; i < numVertices; ++i) {  // Start from index 1 for output consistency
+        std::vector<Node*> nodes;
+        Node* temp = adjList[i];
+
+        // Collect all nodes in a vector
+        while (temp != nullptr) {
+            nodes.push_back(temp);
+            temp = temp->next;
+        }
+
+        // Sort nodes based on destination vertex
+        std::sort(nodes.begin(), nodes.end(), [](Node* a, Node* b) {
+            return a->v < b->v;
+        });
+
+        // Rebuild linked list from sorted nodes
+        adjList[i] = nullptr;
+        for (Node* node : nodes) {
+            node->next = adjList[i];
+            adjList[i] = node;
+        }
+    }
+}
+
+
 void Graph::printAdjList() const {
     for (int i = 1; i < numVertices; ++i) {  // Start from index 1 for output consistency
         std::cout << "ADJ[" << i << "]:";
