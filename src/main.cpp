@@ -32,7 +32,7 @@ int main() {
 
     // Close the file after reading
     file.close();
-    graph.sortAdjList();
+
     // Print the adjacency list of the graph
     graph.printAdjList();
 
