@@ -65,17 +65,18 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 }
 
 
-
 // Method to print the adjacency list for each vertex with exact formatting
 void Graph::printAdjList() const {
-    for (int i = 0; i < numVertices; ++i) {
-        std::cout << "ADJ[" << i + 1 << "]: ";  // Use 1-based indexing for vertex print
-        pNode current = adjList[i];
-        while (current != nullptr) {
-            std::cout << "-->[" << current->u + 1 << " " << current->v + 1 << ": " << std::fixed << std::setprecision(2) << current->weight << "]";
-            current = current->next;
-        }
-        std::cout << std::endl;
-    }
+	for (int i = 0; i < numVertices; i++) {
+	        std::cout << "ADJ[" << i + 1 << "]:";
+	        pNode temp = adjList[i];
+	        while (temp != nullptr) {
+	            // Ensure the correct format with a space before the arrow and precision for weights
+	            std::cout << " -->[" << temp->u + 1 << " " << temp->v + 1 << ": "
+	                      << std::fixed << std::setprecision(2) << temp->weight << "]";
+	            temp = temp->next;
+	        }
+	        std::cout << std::endl;
+	    }
 }
 
