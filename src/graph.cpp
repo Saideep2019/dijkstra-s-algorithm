@@ -75,12 +75,10 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 
 void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; ++i) {
-        std::cout << "ADJ[" << (i + 1) << "]:";
-
+        std::cout << "ADJ[" << i << "]:";
         pNode temp = adjList[i];
         while (temp != nullptr) {
-            std::cout << "-->[" << (temp->u + 1) << " " << (temp->v + 1)
-                      << ": " << std::fixed << std::setprecision(2) << temp->weight << "]";
+            std::cout << "-->[" << temp->u << " " << temp->v << ": " << std::fixed << std::setprecision(2) << temp->weight << "]";
             temp = temp->next;
         }
         std::cout << std::endl;
