@@ -31,57 +31,67 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
+    // Create the new node for the edge u -> v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert the new node at the beginning of the adjacency list for u
-    newNode->next = adjList[u];
-    adjList[u] = newNode;
+    // Insert the new node in sorted order for adjacency list of u
+    if (adjList[u] == nullptr || adjList[u]->v > v) {
+        // Insert at the beginning if the list is empty or if the first node has a larger v
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+    } else {
+        // Find the correct position and insert in sorted order
+        pNode temp = adjList[u];
+        while (temp->next != nullptr && temp->next->v < v) {
+            temp = temp->next;
+        }
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
 
-    // Add reverse edge for undirected graphs
+    // If the graph is undirected, also add the reverse edge v -> u
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
-        reverseNode->next = adjList[v];
-        adjList[v] = reverseNode;
+
+        // Insert the reverse node for the adjacency list of v in sorted order
+        if (adjList[v] == nullptr || adjList[v]->v > u) {
+            reverseNode->next = adjList[v];
+            adjList[v] = reverseNode;
+        } else {
+            pNode tempReverse = adjList[v];
+            while (tempReverse->next != nullptr && tempReverse->next->v < u) {
+                tempReverse = tempReverse->next;
+            }
+            reverseNode->next = tempReverse->next;
+            tempReverse->next = reverseNode;
+        }
     }
 }
 
-
 // Method to print the adjacency list for each vertex with exact formatting
-#include <iostream>
-#include <iomanip>  // For std::setprecision and std::fixed
 
-void Graph::printAdjList() const {
+
+void Graph::printAdjList()  const{
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
         pNode temp = adjList[i];
-        std::vector<pNode> edges;
-
-        // Collect all edges for vertex i
         while (temp != nullptr) {
-            edges.push_back(temp);
-            temp = temp->next;
-        }
+            std::cout << "[" << temp->u + 1 << " " << temp->v + 1 << ": ";
 
-        // Print edges for the current vertex
-        for (size_t j = 0; j < edges.size(); j++) {
-            std::cout << "[" << edges[j]->u + 1 << " " << edges[j]->v + 1 << ": ";
-
-            // Print the weight without decimals if it's a whole number
-            if (edges[j]->weight == int(edges[j]->weight)) {
-                std::cout << int(edges[j]->weight);  // Print as integer if weight is a whole number
-            } else {
-                std::cout << std::fixed << std::setprecision(2) << edges[j]->weight;  // Otherwise, print with two decimal places
-            }
+            // Print the weight with two decimal places
+            std::cout << std::fixed << std::setprecision(2) << temp->weight;
 
             std::cout << "]";
-            if (j != edges.size() - 1) {
+            if (temp->next != nullptr) {
                 std::cout << "-->";
             }
+            temp = temp->next;
         }
 
         std::cout << std::endl;
     }
 }
+
 
 
