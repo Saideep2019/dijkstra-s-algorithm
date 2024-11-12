@@ -47,7 +47,7 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 }
 
 // Method to print the adjacency list for each vertex with exact formatting
-void Graph::printAdjList() {
+void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
@@ -77,5 +77,4 @@ void Graph::printAdjList() {
         std::cout << std::endl;
     }
 }
-
 
