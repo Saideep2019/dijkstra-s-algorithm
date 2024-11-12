@@ -31,14 +31,13 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
-    // Create a new node for the edge from u to v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert the new node at the beginning of the adjacency list for vertex u
+    // Insert the new node at the beginning of the adjacency list for u
     newNode->next = adjList[u];
     adjList[u] = newNode;
 
-    // If the graph is undirected, add the reverse edge from v to u
+    // Add reverse edge for undirected graphs
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
         reverseNode->next = adjList[v];
@@ -46,11 +45,12 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     }
 }
 
+
 // Method to print the adjacency list for each vertex with exact formatting
 #include <iostream>
 #include <iomanip>  // For std::setprecision and std::fixed
 
-void Graph::printAdjList() {
+void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
