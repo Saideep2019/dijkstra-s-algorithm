@@ -34,46 +34,32 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     // Create the new node for edge u -> v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
-    // Insert the new node in sorted order in the adjacency list for u
-    if (adjList[u] == nullptr) {
+    // Insert in sorted order by destination vertex
+    if (adjList[u] == nullptr || adjList[u]->v > v) {
+        newNode->next = adjList[u];
         adjList[u] = newNode;
     } else {
         pNode temp = adjList[u];
-        pNode prev = nullptr;
-        while (temp != nullptr && temp->v < v) { // Sort by destination vertex 'v'
-            prev = temp;
+        while (temp->next != nullptr && temp->next->v < v) {
             temp = temp->next;
         }
-        if (prev == nullptr) {
-            newNode->next = adjList[u];
-            adjList[u] = newNode;
-        } else {
-            newNode->next = prev->next;
-            prev->next = newNode;
-        }
+        newNode->next = temp->next;
+        temp->next = newNode;
     }
 
-    // If the graph is undirected, also add the reverse edge v -> u
+    // If undirected, add reverse edge v -> u
     if (!isDirected) {
         pNode reverseNode = new Node{index, v, u, weight, nullptr};
-
-        // Insert reverse edge in sorted order in the adjacency list for v
-        if (adjList[v] == nullptr) {
+        if (adjList[v] == nullptr || adjList[v]->v > u) {
+            reverseNode->next = adjList[v];
             adjList[v] = reverseNode;
         } else {
             pNode temp = adjList[v];
-            pNode prev = nullptr;
-            while (temp != nullptr && temp->v < u) { // Sort by destination vertex 'u'
-                prev = temp;
+            while (temp->next != nullptr && temp->next->v < u) {
                 temp = temp->next;
             }
-            if (prev == nullptr) {
-                reverseNode->next = adjList[v];
-                adjList[v] = reverseNode;
-            } else {
-                reverseNode->next = prev->next;
-                prev->next = reverseNode;
-            }
+            reverseNode->next = temp->next;
+            temp->next = reverseNode;
         }
     }
 }
