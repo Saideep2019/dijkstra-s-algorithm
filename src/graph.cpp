@@ -100,12 +100,12 @@ void Graph::sortAdjList() {
 
 
 void Graph::printAdjList() const {
-    for (int i = 1; i < numVertices; ++i) {  // Start from index 1 for output consistency
-        std::cout << "ADJ[" << i << "]:";
+    for (int i = 0; i < numVertices; ++i) {  // Start from index 0 to print all vertices
+        std::cout << "ADJ[" << i + 1 << "]:";  // Output as 1-based indexing
         pNode temp = adjList[i];
         while (temp != nullptr) {
-            std::cout << "-->[" << temp->u << " " << temp->v << ": "
-                      << std::fixed << std::setprecision(2) << temp->weight << "]";
+            std::cout << "-->[" << temp->u + 1 << " " << temp->v + 1 << ": "
+                      << std::fixed << std::setprecision(2) << temp->weight << "]";  // Print as 1-based indexing
             temp = temp->next;
         }
         std::cout << std::endl;
