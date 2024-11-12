@@ -1,65 +1,87 @@
+
 #include "graph.h"
 #include <iostream>
+#include <iomanip>
 #include <vector>
-#include <climits>
-#include <queue>
+#include <algorithm>
 
-Graph::Graph(int vertices, bool directed) : numVertices(vertices), isDirected(directed) {
-    adjList.resize(vertices);  // Resize the adjacency list to the number of vertices
+// Method to add an edge to the graph with controlled ordering
+
+Graph::Graph(int n, bool isDirected, bool edgeInsertMethod)
+    : numVertices(n), isDirected(isDirected), edgeInsertMethod(edgeInsertMethod) {
+    adjList.resize(numVertices, nullptr); // Initialize adjacency list with 'n' null pointers
 }
-void Graph::addEdge(int u, int v, double weight) {
+
+
+// Destructor
+Graph::~Graph() {
+    for (int i = 0; i < numVertices; ++i) {
+        pNode current = adjList[i];
+        while (current != nullptr) {
+            pNode temp = current;
+            current = current->next;
+            delete temp; // Free each node in the adjacency list
+        }
+    }
+}
+
+
+void Graph::addEdge(int index, int u, int v, double weight) {
     if (u >= numVertices || v >= numVertices) {
         std::cerr << "Error: Invalid vertex index." << std::endl;
         return;
     }
 
-    adjList[u].push_back(std::make_pair(v, weight));  // Add edge u -> v
+    // Create the new node for the edge u -> v
+    pNode newNode = new Node{index, u, v, weight, nullptr};
 
+    // Insert the new node in sorted order for adjacency list of u
+    if (adjList[u] == nullptr || adjList[u]->v > v) {
+        // Insert at the beginning if the list is empty or if the first node has a larger v
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+    } else {
+        // Find the correct position and insert in sorted order
+        pNode temp = adjList[u];
+        while (temp->next != nullptr && temp->next->v < v) {
+            temp = temp->next;
+        }
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+
+    // If the graph is undirected, also add the reverse edge v -> u
     if (!isDirected) {
-        adjList[v].push_back(std::make_pair(u, weight));  // Add edge v -> u for undirected graphs
+        pNode reverseNode = new Node{index, v, u, weight, nullptr};
+
+        // Insert the reverse node for the adjacency list of v in sorted order
+        if (adjList[v] == nullptr || adjList[v]->v > u) {
+            reverseNode->next = adjList[v];
+            adjList[v] = reverseNode;
+        } else {
+            pNode tempReverse = adjList[v];
+            while (tempReverse->next != nullptr && tempReverse->next->v < u) {
+                tempReverse = tempReverse->next;
+            }
+            reverseNode->next = tempReverse->next;
+            tempReverse->next = reverseNode;
+        }
     }
 }
+
+// Method to print the adjacency list for each vertex with exact formatting
+
 
 void Graph::printAdjList() const {
-    for (int i = 0; i < numVertices; i++) {
-        std::cout << "ADJ[" << i << "]:";
-        for (const auto& edge : adjList[i]) {
-            std::cout << "-->" << "[" << i << " " << edge.first << ": " << edge.second << "]";
+    for (int i = 0; i < numVertices; ++i) {
+        std::cout << "ADJ[" << (i + 1) << "]:";
+
+        pNode temp = adjList[i];
+        while (temp != nullptr) {
+            std::cout << "-->[" << (temp->u + 1) << " " << (temp->v + 1)
+                      << ": " << std::fixed << std::setprecision(2) << temp->weight << "]";
+            temp = temp->next;
         }
         std::cout << std::endl;
-    }
-}
-
-void Graph::shortestPath(int startVertex) {
-    std::vector<double> dist(numVertices, INT_MAX);  // Initialize distances with infinity
-    dist[startVertex] = 0;
-
-    // Priority queue for Dijkstra's algorithm
-    std::priority_queue<std::pair<double, int>, std::vector<std::pair<double, int>>, std::greater<>> pq;
-    pq.push(std::make_pair(0.0, startVertex));  // Starting vertex with distance 0
-
-    while (!pq.empty()) {
-        int u = pq.top().second;
-        double uDist = pq.top().first;
-        pq.pop();
-
-        if (uDist > dist[u]) continue;  // Skip if this distance is outdated
-
-        // Explore the neighbors of u
-        for (const auto& neighbor : adjList[u]) {
-            int v = neighbor.first;
-            double weight = neighbor.second;
-
-            if (dist[u] + weight < dist[v]) {
-                dist[v] = dist[u] + weight;
-                pq.push(std::make_pair(dist[v], v));  // Push the updated distance to the priority queue
-            }
-        }
-    }
-
-    // Print the shortest distances
-    std::cout << "The shortest distances from vertex " << startVertex << " are:" << std::endl;
-    for (int i = 0; i < numVertices; i++) {
-        std::cout << "Vertex " << i << ": " << dist[i] << std::endl;
     }
 }
