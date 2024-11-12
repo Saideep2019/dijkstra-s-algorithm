@@ -67,7 +67,7 @@ void Graph::addEdge(int index, int u, int v, double weight) {
 // Method to print the adjacency list for each vertex with exact formatting
 
 
-void Graph::printAdjList()  const{
+void Graph::printAdjList() const {
     for (int i = 0; i < numVertices; i++) {
         std::cout << "ADJ[" << i + 1 << "]:-->";
 
@@ -75,10 +75,10 @@ void Graph::printAdjList()  const{
         while (temp != nullptr) {
             std::cout << "[" << temp->u + 1 << " " << temp->v + 1 << ": ";
 
-            // Print the weight with two decimal places
+            // Use fixed-point notation with exactly two decimal places
             std::cout << std::fixed << std::setprecision(2) << temp->weight;
-
             std::cout << "]";
+
             if (temp->next != nullptr) {
                 std::cout << "-->";
             }
