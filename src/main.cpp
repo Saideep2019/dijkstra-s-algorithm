@@ -1,4 +1,3 @@
-
 #include "graph.h"
 #include <iostream>
 #include <fstream>
@@ -17,20 +16,22 @@ int main() {
         return 1;
     }
 
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        int index, u, v;
-        double weight;
+    // Read the number of vertices and edges
+    int numVertices, numEdges;
+    file >> numVertices >> numEdges;
 
-        // Read the data for each edge in the file (index, u, v, weight)
-        if (iss >> index >> u >> v >> weight) {
-            // Add the edge to the graph (use the appropriate indices and weight)
-            graph.addEdge(index, u - 1, v - 1, weight);  // Assuming 1-based indexing in the file
-        }
+    // Read edges from the file and add them to the graph
+    for (int i = 0; i < numEdges; ++i) {
+        int u, v, weight;
+        file >> u >> v >> weight;
+
+        // Adjust vertex indices to 0-based indexing
+        u--;
+        v--;
+
+        graph.addEdge(i + 1, u, v, weight); // Assuming 1-based indexing for edge index
     }
 
-    // Close the file after reading
     file.close();
 
     // Print the adjacency list of the graph
