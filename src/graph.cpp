@@ -1,3 +1,4 @@
+
 #include "graph.h"
 #include <iostream>
 #include <vector>
@@ -39,7 +40,6 @@ void Graph::addEdge(int index, int u, int v, double weight) {
     }
 
     pNode newNode = new Node{index, u, v, weight, nullptr}; // Create a new edge node
-    std::cout << "Adding edge: " << u + 1 << " --> " << v + 1 << " with weight " << weight << std::endl;
 
     // Insert the new node at the correct position in the adjacency list
     if (edgeInsertMethod) {
@@ -98,11 +98,4 @@ void Graph::printAdjList() const {
 
     std::cout << std::endl;  // Additional newline to match output formatting
 }
-
-
-
-
-
-
-
 
