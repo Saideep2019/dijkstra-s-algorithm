@@ -31,7 +31,7 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         return;
     }
 
-    // Create the new node for the edge u -> v
+    // Create the new node for edge u -> v
     pNode newNode = new Node{index, u, v, weight, nullptr};
 
     // Insert the new node in sorted order for adjacency list of u
@@ -67,6 +67,7 @@ void Graph::addEdge(int index, int u, int v, double weight) {
         }
     }
 }
+
 
 // Method to print the adjacency list for each vertex with exact formatting
 
