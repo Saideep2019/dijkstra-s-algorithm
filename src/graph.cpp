@@ -26,26 +26,55 @@ Graph::~Graph() {
 
 
 void Graph::addEdge(int index, int u, int v, double weight) {
-    if (u >= numVertices || v >= numVertices) {
+    if (u < 1 || u > numVertices || v < 1 || v > numVertices) {
         std::cerr << "Error: Invalid vertex index." << std::endl;
         return;
     }
 
-    // Create a new node for edge u -> v
-    pNode newNode = new Node{index, u, v, weight, nullptr};
+    // Adjust u and v to 0-based indexing for internal use
+    u--; v--;
 
-    // Insert the new node at the beginning of the adjacency list for u
-    newNode->next = adjList[u - 1];
-    adjList[u - 1] = newNode;
+    // Create the new node for edge u -> v
+    pNode newNode = new Node{index, u + 1, v + 1, weight, nullptr};
+
+    if (edgeInsertMethod) {
+        // Insert at rear
+        if (!adjList[u]) {
+            adjList[u] = newNode;
+        } else {
+            pNode current = adjList[u];
+            while (current->next) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    } else {
+        // Insert at front
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+    }
 
     // If the graph is undirected, also add the reverse edge v -> u
     if (!isDirected) {
-        pNode reverseNode = new Node{index, v, u, weight, nullptr};
-        reverseNode->next = adjList[v - 1];
-        adjList[v - 1] = reverseNode;
+        pNode reverseNode = new Node{index, v + 1, u + 1, weight, nullptr};
+        if (edgeInsertMethod) {
+            // Insert at rear
+            if (!adjList[v]) {
+                adjList[v] = reverseNode;
+            } else {
+                pNode current = adjList[v];
+                while (current->next) {
+                    current = current->next;
+                }
+                current->next = reverseNode;
+            }
+        } else {
+            // Insert at front
+            reverseNode->next = adjList[v];
+            adjList[v] = reverseNode;
+        }
     }
 }
-
 
 
 // Method to print the adjacency list for each vertex with exact formatting
