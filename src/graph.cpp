@@ -26,53 +26,40 @@ Graph::~Graph() {
 
 
 void Graph::addEdge(int index, int u, int v, double weight) {
-    if (u < 1 || u > numVertices || v < 1 || v > numVertices) {
-        std::cerr << "Error: Invalid vertex index." << std::endl;
-        return;
+    std::cout << "Adding edge: (" << u + 1 << ", " << v + 1 << ") with weight " << weight << "\n";
+
+    // Ensure adjacency list for both vertices (u and v) exists, initialize them if necessary
+    if (adjList[u] == nullptr) {
+        adjList[u] = nullptr;
+    }
+    if (adjList[v] == nullptr) {
+        adjList[v] = nullptr;
     }
 
-    // Create the new node for edge u -> v
-    pNode newNode = new Node{index, u, v, weight, nullptr};
+    // Add edge from u to v
+    Node* newNode = new Node();
+    newNode->index = index;
+    newNode->u = u;
+    newNode->v = v;
+    newNode->weight = weight;
+    newNode->next = adjList[u];
+    adjList[u] = newNode;
 
-    // Insert the new node based on the edgeInsertMethod
-    if (edgeInsertMethod) {
-        // Insert at rear
-        if (!adjList[u-1]) {
-            adjList[u-1] = newNode;
-        } else {
-            pNode current = adjList[u-1];
-            while (current->next) {
-                current = current->next;
-            }
-            current->next = newNode;
-        }
-    } else {
-        // Insert at front
-        newNode->next = adjList[u-1];
-        adjList[u-1] = newNode;
-    }
-
-    // If the graph is undirected, also add the reverse edge v -> u
+    // If the graph is undirected, add the reverse edge
     if (!isDirected) {
-        pNode reverseNode = new Node{index, v, u, weight, nullptr};
-        if (edgeInsertMethod) {
-            // Insert at rear
-            if (!adjList[v-1]) {
-                adjList[v-1] = reverseNode;
-            } else {
-                pNode current = adjList[v-1];
-                while (current->next) {
-                    current = current->next;
-                }
-                current->next = reverseNode;
-            }
-        } else {
-            // Insert at front
-            reverseNode->next = adjList[v-1];
-            adjList[v-1] = reverseNode;
-        }
+        Node* reverseNode = new Node();
+        reverseNode->index = index;
+        reverseNode->u = v;
+        reverseNode->v = u;
+        reverseNode->weight = weight;
+        reverseNode->next = adjList[v];
+        adjList[v] = reverseNode;
     }
 }
+
+
+
+
 
 // Method to print the adjacency list for each vertex with exact formatting
 

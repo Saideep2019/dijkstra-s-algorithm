@@ -32,6 +32,15 @@ int main() {
 
     // Close the file after reading
     file.close();
+    // Manually add an edge for vertex 2 -> vertex 3
+    graph.addEdge(0, 1, 2, 1.00);  // Add edge from vertex 2 to vertex 3 (0-indexed)
+
+    // Manually add an edge for vertex 3 -> vertex 4
+    graph.addEdge(1, 2, 3, 2.00);  // Add edge from vertex 3 to vertex 4 (0-indexed)
+
+    // Manually add an edge for vertex 4 -> vertex 5
+    graph.addEdge(2, 3, 4, 3.00);  // Add edge from vertex 4 to vertex 5 (0-indexed)
+
 
     // Print the adjacency list of the graph
     graph.printAdjList();

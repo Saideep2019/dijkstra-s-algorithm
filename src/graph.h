@@ -19,6 +19,7 @@ public:
     ~Graph();
 
     // Methods to add edges and print the adjacency list
+
     void addEdge(int index, int u, int v, double weight);
     void printAdjList() const;
 
