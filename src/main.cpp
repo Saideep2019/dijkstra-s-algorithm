@@ -33,13 +33,20 @@ int main() {
     // Close the file after reading
     file.close();
     // Manually add an edge for vertex 2 -> vertex 3
-    graph.addEdge(0, 1, 2, 1.00);  // Add edge from vertex 2 to vertex 3 (0-indexed)
-
-    // Manually add an edge for vertex 3 -> vertex 4
-    graph.addEdge(1, 2, 3, 2.00);  // Add edge from vertex 3 to vertex 4 (0-indexed)
-
-    // Manually add an edge for vertex 4 -> vertex 5
-    graph.addEdge(2, 3, 4, 3.00);  // Add edge from vertex 4 to vertex 5 (0-indexed)
+    graph.addEdge(0, 1, 2, 10.00); // Edge (1, 2) with weight 10
+    graph.addEdge(1, 1, 4, 5.00);  // Edge (1, 4) with weight 5
+    graph.addEdge(2, 2, 3, 1.00);  // Edge (2, 3) with weight 1
+   graph. addEdge(3, 2, 4, 2.00);  // Edge (2, 4) with weight 2
+    graph.addEdge(4, 3, 5, 4.00);  // Edge (3, 5) with weight 4
+    graph.addEdge(5, 4, 2, 3.00);  // Edge (4, 2) with weight 3
+    graph.addEdge(6, 4, 3, 9.00);  // Edge (4, 3) with weight 9
+    graph.addEdge(7, 4, 5, 2.00);  // Edge (4, 5) with weight 2
+    graph.addEdge(8, 5, 1, 7.00);  // Edge (5, 1) with weight 7
+   graph. addEdge(9, 5, 3, 6.00);  // Edge (5, 3) with weight 6
+    graph.addEdge(10, 6, 3, 7.00); // Edge (6, 3) with weight 7
+    graph.addEdge(11, 6, 7, 5.00); // Edge (6, 7) with weight 5
+    graph.addEdge(12, 7, 8, 3.00); // Edge (7, 8) with weight 3
+    graph.addEdge(13, 8, 6, 1.00); // Edge (8, 6) with weight 1
 
 
     // Print the adjacency list of the graph

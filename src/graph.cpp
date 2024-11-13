@@ -26,7 +26,7 @@ Graph::~Graph() {
 
 
 void Graph::addEdge(int index, int u, int v, double weight) {
-    std::cout << "Adding edge: (" << u + 1 << ", " << v + 1 << ") with weight " << weight << "\n";
+
 
     // Ensure adjacency list for both vertices (u and v) exists, initialize them if necessary
     if (adjList[u] == nullptr) {
