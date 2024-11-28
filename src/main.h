@@ -5,13 +5,7 @@
 #include <string>
 #include <stdexcept>
 #include "graph.h"
-#include <iomanip>
-#include <vector>
-#include <algorithm>
-#include <cfloat>
 
-using std::cout;
-using std::endl;
 // Function to validate command-line arguments
 inline bool isValid(int argc, char* argv[]) {
     // Check if correct number of arguments is provided
@@ -54,49 +48,8 @@ inline void printInvalidInstruction() {
 }
 
 // Function declarations for other functions that are likely defined elsewhere
-void printPath(pGRAPH graph, int src, int dest) {
-    // Check if path exists
-    if (graph->V[dest]->key == DBL_MAX) {
-        cout << "There is no path from " << src << " to " << dest << "." << endl;
-        return;
-    }
+void printPath(pGRAPH graph, int src, int dest);
 
-    // Reconstruct the path manually without vector
-    int path[100];  // Assuming a max path length of 100
-    int pathLength = 0;
-
-    // Collect vertices in the path
-    int current = dest;
-    while (current != src) {
-        path[pathLength++] = current;
-        current = graph->V[current]->pi;
-    }
-    path[pathLength++] = src;
-
-    // Reverse the path manually
-    for (int i = 0; i < pathLength / 2; i++) {
-        int temp = path[i];
-        path[i] = path[pathLength - 1 - i];
-        path[pathLength - 1 - i] = temp;
-    }
-
-    // Print the path header
-    cout << "The shortest path from " << src << " to " << dest << " is: ";
-
-    // Print the path with weights
-    for (int i = 0; i < pathLength; ++i) {
-        // Print vertex with its distance
-        printf("[%d:    %.2lf]", path[i], graph->V[path[i]]->key);
-
-        // Add connection arrow between vertices (except for the last vertex)
-        if (i < pathLength - 1) {
-            cout << "-->";
-        }
-    }
-
-    // End the line
-    cout << endl;
-}
 
 void getInstructions(pGRAPH graph);
 
