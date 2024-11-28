@@ -1,91 +1,82 @@
 #include "heap.h"
-#include <cstdlib>
-#include <algorithm>
+#include <iostream>
+using namespace std;
 
-pHEAP InitializeHeap(int capacity) {
+void swap(pHEAP heap,int i,int j) {
+    pELEMENT temp = heap->H[i];
+    heap->H[i] = heap->H[j];
+    heap->H[j] = temp;
+    heap->H[i]->pos = i;
+    heap->H[j]->pos = j;
+}
+
+pHEAP createHeap(int capacity) {
     pHEAP heap = new HEAP;
     heap->capacity = capacity;
     heap->size = 0;
-    heap->H = new pVERTEX[capacity + 1];
+    heap->H = new pELEMENT[capacity+1];
     return heap;
 }
 
-void Insert(pHEAP heap, pVERTEX element) {
-    if (heap->size >= heap->capacity) {
-        // Handle heap overflow
+void heapify(pHEAP heap,int i) {
+    int min = i;
+    int left = 2 * i;
+    int right = 2 * i + 1;
+
+    if (left <= heap->size && heap->H[left]->key < heap->H[min]->key) {
+        min = left;
+    }
+    if (right <= heap->size && heap->H[right]->key < heap->H[min]->key) {
+        min = right;
+    }
+    if (min != i) {
+        swap(heap,i,min);
+        heapify(heap,min);
+    }
+}
+
+void insert(pHEAP heap,pELEMENT element) {
+    if (heap->size == heap->capacity) {
+        cerr << "Error: Heap overflow detected" << endl;
         return;
     }
-
     heap->size++;
     int i = heap->size;
     heap->H[i] = element;
-    element->position = i;
-
-    // Bubble up
-    while (i > 1 && heap->H[i]->key < heap->H[i/2]->key) {
-        std::swap(heap->H[i], heap->H[i/2]);
-        heap->H[i]->position = i;
-        heap->H[i/2]->position = i/2;
-        i = i/2;
+    element->pos = i;
+    while (i > 1 && heap->H[i/2]->key > heap->H[i]->key) {
+        swap(heap,i,i / 2);
+        i = i / 2;
     }
 }
 
-pVERTEX ExtractMin(pHEAP heap) {
-    if (IsEmpty(heap)) {
+void decreaseKey(pHEAP heap,int pos,double newKey) {
+    if (newKey > heap->H[pos]->key) {
+        cerr << "Error: New key is bigger than current key" << endl;
+        return;
+    }
+    heap->H[pos]->key = newKey;
+    int i = pos;
+    while (i > 1 && heap->H[i/2]->key > heap->H[i]->key) {
+        swap(heap,i,i / 2);
+        i = i / 2;
+    }
+}
+
+pVERTEX extractMin(pHEAP heap) {
+    if (heap->size < 1) {
+        cerr << "Error: Heap overflow detected" << endl;
         return nullptr;
     }
-
     pVERTEX min = heap->H[1];
     heap->H[1] = heap->H[heap->size];
-    heap->H[1]->position = 1;
+    heap->H[1]->pos = 1;
     heap->size--;
-
-    MinHeapify(heap, 1);
-
+    heapify(heap,1);
     return min;
 }
 
-void DecreaseKey(pHEAP heap, int index, double newKey) {
-    if (newKey > heap->H[index]->key) {
-        return;  // New key is greater, do nothing
-    }
-
-    heap->H[index]->key = newKey;
-
-    while (index > 1 && heap->H[index]->key < heap->H[index/2]->key) {
-        std::swap(heap->H[index], heap->H[index/2]);
-        heap->H[index]->position = index;
-        heap->H[index/2]->position = index/2;
-        index = index/2;
-    }
-}
-
-void MinHeapify(pHEAP heap, int index) {
-    int smallest = index;
-    int left = 2 * index;
-    int right = 2 * index + 1;
-
-    if (left <= heap->size && heap->H[left]->key < heap->H[smallest]->key) {
-        smallest = left;
-    }
-
-    if (right <= heap->size && heap->H[right]->key < heap->H[smallest]->key) {
-        smallest = right;
-    }
-
-    if (smallest != index) {
-        std::swap(heap->H[index], heap->H[smallest]);
-        heap->H[index]->position = index;
-        heap->H[smallest]->position = smallest;
-        MinHeapify(heap, smallest);
-    }
-}
-
-bool IsEmpty(pHEAP heap) {
-    return heap->size == 0;
-}
-
-void DestroyHeap(pHEAP heap) {
+void deleteHeap(pHEAP heap) {
     delete[] heap->H;
     delete heap;
 }

@@ -1,14 +1,21 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "data_structures.h"
 #include "graph.h"
-#include "util.h"
-#include "stack.h"
-#include "heap.h"
 
-// Function prototypes
-void processInstructions();
-void cleanupAndExit();
+// Function to validate command-line arguments
+bool isValid(int argc, char* argv[]);
+
+// Function to print usage error when incorrect arguments are provided
+void printUsageError();
+
+// Function to print an invalid instruction message
+void printInvalidInstruction();
+
+// Function to print the shortest path between two vertices
+void printPath(pGRAPH graph, int src, int dest);
+
+// Main instruction processing function
+void getInstructions(pGRAPH graph);
 
 #endif // MAIN_H

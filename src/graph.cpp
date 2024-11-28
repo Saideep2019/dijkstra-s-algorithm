@@ -1,90 +1,130 @@
-#include "graph.h"
 #include <iostream>
-#include <iomanip>
-#include <vector>
-#include <algorithm>
+#include "stack.h"
+#include "graph.h"
+#include <cstdio>
+#include <cfloat>
+using namespace std;
 
-// Method to add an edge to the graph with controlled ordering
-
-Graph::Graph(int n, bool isDirected, bool edgeInsertMethod)
-    : numVertices(n), isDirected(isDirected), edgeInsertMethod(edgeInsertMethod) {
-    adjList.resize(numVertices, nullptr); // Initialize adjacency list with 'n' null pointers
+pGRAPH createGraph(int n,int m) {
+    pGRAPH graph = new GRAPH;
+    graph->n = n;
+    graph->m = m;
+    graph->V = new pVERTEX[n+1];
+    graph->ADJ = new pNODE[n+1];
+    for (int i = 1; i <= n; ++i) {
+        graph->V[i] = new VERTEX;
+        graph->V[i]->index = i;
+        graph->V[i]->key = DBL_MAX;
+        graph->V[i]->parentIndex = -1;
+        graph->ADJ[i] = nullptr;
+    }
+    return graph;
 }
 
-
-// Destructor
-Graph::~Graph() {
-    for (int i = 0; i < numVertices; ++i) {
-        pNode current = adjList[i];
-        while (current != nullptr) {
-            pNode temp = current;
-            current = current->next;
-            delete temp; // Free each node in the adjacency list
+void addEdge(pGRAPH graph,int edgeindex,int u,int v,double w,bool directed,bool flag) {
+    pNODE node = new NODE;
+    node->index = edgeindex;
+    node->u = u;
+    node->v = v;
+    node->w = w;
+    node->next = nullptr;
+    if (flag) {
+        if (graph->ADJ[u] == nullptr) {
+            graph->ADJ[u] = node;
+        }
+		else {
+            pNODE tmp = graph->ADJ[u];
+            while (tmp->next) tmp = tmp->next;
+            tmp->next = node;
         }
     }
-}
-
-
-void Graph::addEdge(int index, int u, int v, double weight) {
-
-
-    // Ensure adjacency list for both vertices (u and v) exists, initialize them if necessary
-    if (adjList[u] == nullptr) {
-        adjList[u] = nullptr;
+	else {
+        node->next = graph->ADJ[u];
+        graph->ADJ[u] = node;
     }
-    if (adjList[v] == nullptr) {
-        adjList[v] = nullptr;
-    }
-
-    // Add edge from u to v
-    Node* newNode = new Node();
-    newNode->index = index;
-    newNode->u = u;
-    newNode->v = v;
-    newNode->weight = weight;
-    newNode->next = adjList[u];
-    adjList[u] = newNode;
-
-    // If the graph is undirected, add the reverse edge
-    if (!isDirected) {
-        Node* reverseNode = new Node();
-        reverseNode->index = index;
-        reverseNode->u = v;
-        reverseNode->v = u;
-        reverseNode->weight = weight;
-        reverseNode->next = adjList[v];
-        adjList[v] = reverseNode;
+    if (!directed) {
+        addEdge(graph,edgeindex,v,u,w,true,flag);
     }
 }
 
+void printAdjList(pGRAPH graph) {
+    for(int i = 1; i <= graph->n; ++i) {
+        cout << "ADJ[" << i << "]:";
+        for(pNODE node = graph->ADJ[i]; node != nullptr; node = node->next)
+            printf("-->[%d %d: %4.2lf]",node->u,node->v,node->w);
+        cout << endl;
+    }
+}
 
+void initSingleSource(pGRAPH graph,int src) {
+    for(int i = 1; i <= graph->n; ++i) {
+        graph->V[i]->key = DBL_MAX;
+        graph->V[i]->parentIndex = -1;
+    }
+    graph->V[src]->key = 0.0;
+}
 
+void relax(pGRAPH graph,pHEAP heap,int u,int v,double w) {
+    if (graph->V[v]->key > graph->V[u]->key + w) {
+        graph->V[v]->key = graph->V[u]->key + w;
+        graph->V[v]->parentIndex = u;
+        decreaseKey(heap,graph->V[v]->pos,graph->V[v]->key);
+    }
+}
 
+void singlePairShortestPath(pGRAPH graph,int src,int dest) {
+    initSingleSource(graph,src);
+    pHEAP heap = createHeap(graph->n);
+    for(int i = 1; i <= graph->n; ++i) {
+        insert(heap,graph->V[i]);
+    }
+    while(heap->size > 0) {
+        pVERTEX u = extractMin(heap);
 
-// Method to print the adjacency list for each vertex with exact formatting
+        if (u->index == dest && u->key != DBL_MAX) {
+            break;
+        }
+        if (u->key == DBL_MAX) {
+            break;
+        }
 
-
-void Graph::printAdjList() const {
-    for (int i = 0; i < numVertices; i++) {
-        std::cout << "ADJ[" << i + 1 << "]:-->";
-
-        // Temporary vector to hold the edges of the current vertex
-        pNode temp = adjList[i];
-
-        // Print the edges
-        bool first = true;
-        while (temp != nullptr) {
-            if (!first) {
-                std::cout << "-->";
+        for (pNODE node = graph->ADJ[u->index]; node != nullptr; node = node->next) {
+            int v = node->v;
+            double weight = node->w;
+            if (u->key != DBL_MAX && ( u->index == src || graph->V[u->index]->parentIndex != -1)) {
+                relax(graph,heap,u->index,v,weight);
             }
-            std::cout << "[" << temp->u + 1 << " " << temp->v + 1 << ": ";
-            std::cout << std::fixed << std::setprecision(2) << temp->weight;
-            std::cout << "]";
-            first = false;
-            temp = temp->next;
         }
-
-        std::cout << std::endl;
     }
+    deleteHeap(heap);
 }
 
+void singleSourceShortestPath(pGRAPH graph,int src) {
+    initSingleSource(graph,src);
+    pHEAP heap = createHeap(graph->n);
+    for (int i = 1; i <= graph->n; ++i) {
+        insert(heap,graph->V[i]);
+    }
+    while (heap->size) {
+        pVERTEX u = extractMin(heap);
+        for (pNODE node = graph->ADJ[u->index]; node != nullptr; node = node->next) {
+            relax(graph,heap,u->index,node->v,node->w);
+        }
+    }
+    deleteHeap(heap);
+}
+
+void deleteGraph(pGRAPH graph) {
+    for (int i = 1; i <= graph->n; ++i) {
+        delete graph->V[i];
+        pNODE node = graph->ADJ[i];
+        while (node) {
+            pNODE temp = node;
+            node = node->next;
+            delete temp;
+        }
+    }
+    delete[] graph->ADJ;
+    delete[] graph->V;
+    delete graph;
+}

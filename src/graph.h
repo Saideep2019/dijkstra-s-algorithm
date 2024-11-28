@@ -1,33 +1,31 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-#include <vector>
+#include "data_structures.h"
+#include "heap.h"
 
-class Graph {
-public:
-    struct Node {
-        int index;      // Edge index
-        int u, v;       // Source (u) and destination (v) vertices
-        double weight;  // Edge weight
-        Node* next;     // Pointer to the next node in the list
-    };
+// Function to create a graph with `n` vertices and `m` edges
+pGRAPH createGraph(int n, int m);
 
-    typedef Node* pNode;  // Define pNode as a pointer to Node
+// Function to add an edge to the graph
+void addEdge(pGRAPH graph, int edgeindex, int u, int v, double w, bool directed, bool flag);
 
-    // Constructor and Destructor
-    Graph(int n, bool isDirected, bool edgeInsertMethod);  // Constructor declaration
-    ~Graph();
+// Function to print the adjacency list of the graph
+void printAdjList(pGRAPH graph);
 
-    // Methods to add edges and print the adjacency list
+// Function to initialize all vertices with a single source for shortest path algorithms
+void initSingleSource(pGRAPH graph, int src);
 
-    void addEdge(int index, int u, int v, double weight);
-    void printAdjList() const;
+// Function to relax an edge during shortest path computation
+void relax(pGRAPH graph, pHEAP heap, int u, int v, double w);
 
-private:
-    int numVertices;            // Number of vertices in the graph
-    bool isDirected;            // Whether the graph is directed
-    bool edgeInsertMethod;      // Whether to insert edges in sorted order
-    std::vector<pNode> adjList; // Adjacency list represented as a vector of Node pointers
-};
+// Function to compute the shortest path from a single source to a single destination
+void singlePairShortestPath(pGRAPH graph, int src, int dest);
 
-#endif // GRAPH_H
+// Function to compute the shortest paths from a single source to all other vertices
+void singleSourceShortestPath(pGRAPH graph, int src);
+
+// Function to delete the graph and free allocated memory
+void deleteGraph(pGRAPH graph);
+
+#endif

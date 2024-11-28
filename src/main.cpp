@@ -1,56 +1,87 @@
-
-#include "graph.h"
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <string>
+#include "graph.h"
+#include "main.h"
+#include <cfloat>
+using namespace std;
 
-int main() {
-    // Create a graph with 8 vertices, directed, and edge insert method as true (insert at rear)
-    Graph graph(8, true, true);
-
-    // Open the file that contains graph data (change to your file's path)
-    std::ifstream file("network01.txt");
-
-    if (!file.is_open()) {
-        std::cerr << "Error opening file." << std::endl;
-        return 1;
+int main(int argc,char* argv[]) {
+    if (!isValid(argc,argv) ) {
+        printUsageError();
+        return -1;
     }
 
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        int index, u, v;
-        double weight;
+    ifstream inFile(argv[1]);
+    if (!inFile.is_open() ) {
+        cerr << "Error: Open File Not Successful" << endl;
+        return -1;
+    }
 
-        // Read the data for each edge in the file (index, u, v, weight)
-        if (iss >> index >> u >> v >> weight) {
-            // Add the edge to the graph (use the appropriate indices and weight)
-            graph.addEdge(index, u - 1, v - 1, weight);  // Assuming 1-based indexing in the file
+    int n, m;
+    inFile >> n >> m;
+    pGRAPH graph = createGraph(n,m);
+    string graphType = argv[2];
+    int flag = stoi(argv[3]);
+    bool isDirected = (graphType == "DirectedGraph");
+    for (int i = 0; i < m; ++i) {
+        int edgeIndex, u, v;
+        double w;
+        inFile >> edgeIndex >> u >> v >> w;
+        addEdge(graph,edgeIndex,u,v,w,isDirected,flag);
+    }
+    inFile.close();
+    getInstructions(graph);
+    deleteGraph(graph);
+    return 0;
+}
+
+void getInstructions(pGRAPH graph) {
+    string instruction;
+    int src, dest;
+    int lastSrc = -1;
+    int lastDest = -1;
+    while (cin >> instruction) {
+        if (instruction == "Stop") {
+            break;
+        }
+        else if (instruction == "PrintADJ") {
+            printAdjList(graph);
+        }
+        else if (instruction == "SinglePair") {
+            cin >> src >> dest;
+            singlePairShortestPath(graph,src,dest);
+            lastSrc = src;
+            lastDest = dest;
+        }
+        else if (instruction == "SingleSource") {
+            cin >> src;
+            singleSourceShortestPath(graph,src);
+            lastSrc = src;
+            lastDest = -1;
+        }
+        else if (instruction == "PrintLength") {
+            cin >> src >> dest;
+            if (lastSrc == src && (lastDest == dest || lastDest == -1)) {
+                if (graph->V[dest]->key == DBL_MAX) {
+                    cout << "There is no path from " << src << " to " << dest << "." << endl;
+                }
+                else {
+                    cout << "The length of the shortest path ";
+                    printf("from %d to %d is:     %.2lf\n",src,dest,graph->V[dest]->key);
+                }
+            }
+            else {
+                cout << "There is no path from " << src << " to " << dest << "." << endl;
+            }
+        }
+        else if (instruction == "PrintPath") {
+            cin >> src >> dest;
+            if (lastSrc == src && (dest == lastDest || lastDest == -1)) {
+                printPath(graph,src,dest);
+            }
+        }
+        else {
+            printInvalidInstruction();
         }
     }
-
-    // Close the file after reading
-    file.close();
-    // Manually add an edge for vertex 2 -> vertex 3
-    graph.addEdge(0, 1, 2, 10.00); // Edge (1, 2) with weight 10
-    graph.addEdge(1, 1, 4, 5.00);  // Edge (1, 4) with weight 5
-    graph.addEdge(2, 2, 3, 1.00);  // Edge (2, 3) with weight 1
-   graph. addEdge(3, 2, 4, 2.00);  // Edge (2, 4) with weight 2
-    graph.addEdge(4, 3, 5, 4.00);  // Edge (3, 5) with weight 4
-    graph.addEdge(5, 4, 2, 3.00);  // Edge (4, 2) with weight 3
-    graph.addEdge(6, 4, 3, 9.00);  // Edge (4, 3) with weight 9
-    graph.addEdge(7, 4, 5, 2.00);  // Edge (4, 5) with weight 2
-    graph.addEdge(8, 5, 1, 7.00);  // Edge (5, 1) with weight 7
-   graph. addEdge(9, 5, 3, 6.00);  // Edge (5, 3) with weight 6
-    graph.addEdge(10, 6, 3, 7.00); // Edge (6, 3) with weight 7
-    graph.addEdge(11, 6, 7, 5.00); // Edge (6, 7) with weight 5
-    graph.addEdge(12, 7, 8, 3.00); // Edge (7, 8) with weight 3
-    graph.addEdge(13, 8, 6, 1.00); // Edge (8, 6) with weight 1
-
-
-    // Print the adjacency list of the graph
-    graph.printAdjList();
-
-    return 0;
 }

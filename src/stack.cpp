@@ -1,59 +1,54 @@
 #include "stack.h"
-#include <cstdlib>
 #include <iostream>
+#include <cfloat>
+using namespace std;
 
-pSTACK initializeStack(int capacity) {
-    pSTACK stack = new STACK;
-    stack->capacity = capacity;
-    stack->top = -1;
-    stack->array = new pVERTEX[capacity];
-    return stack;
+pSTACK createStack() {
+    return nullptr;
 }
 
-bool isStackEmpty(pSTACK stack) {
-    return stack->top == -1;
+void push(pSTACK* stack,pVERTEX vertex) {
+    pSTACK node = new STACK;
+    node->vertex = vertex;
+    node->next = *stack;
+    *stack = node;
 }
 
-bool isStackFull(pSTACK stack) {
-    return stack->top == stack->capacity - 1;
+pVERTEX pop(pSTACK* stack) {
+    if (*stack == nullptr) return nullptr;
+    pSTACK tmp = *stack;
+    pVERTEX vertex = tmp->vertex;
+    *stack = (*stack)->next;
+    delete tmp;
+    return vertex;
 }
 
-void push(pSTACK stack, pVERTEX vertex) {
-    if (isStackFull(stack)) {
-        std::cerr << "Stack overflow\n";
+void deleteStack(pSTACK* stack) {
+    while (*stack) {
+        pop(stack);
+    }
+}
+
+void printPath(pGRAPH graph,int src,int dest) {
+    if (graph->V[dest]->key == DBL_MAX || graph->V[dest]->parentIndex == -1) {
+        cout << "There is no path from " <<
+         src << " to " << dest << "." << endl;
         return;
     }
-    stack->array[++stack->top] = vertex;
-}
-
-pVERTEX pop(pSTACK stack) {
-    if (isStackEmpty(stack)) {
-        std::cerr << "Stack underflow\n";
-        return nullptr;
+    pSTACK pathStack = nullptr;
+    int curr = dest;
+    while (curr != -1) {
+        push(&pathStack,graph->V[curr]);
+        curr = graph->V[curr]->parentIndex;
     }
-    return stack->array[stack->top--];
-}
-
-pVERTEX peek(pSTACK stack) {
-    if (isStackEmpty(stack)) {
-        std::cerr << "Stack is empty\n";
-        return nullptr;
+    printf("The shortest path from %d to %d is:\n",src,dest);
+    while (pathStack != nullptr) {
+        pVERTEX v = pop(&pathStack);
+        printf("[%d:%8.2lf]",v->index,v->key);
+        if (pathStack != nullptr) {
+            printf("-->");
+        }
     }
-    return stack->array[stack->top];
-}
-
-void freeStack(pSTACK stack) {
-    delete[] stack->array;
-    delete stack;
-}
-
-void printStack(pSTACK stack) {
-    if (isStackEmpty(stack)) {
-        std::cout << "Stack is empty\n";
-        return;
-    }
-    for (int i = stack->top; i >= 0; i--) {
-        std::cout << stack->array[i]->index << " ";
-    }
-    std::cout << "\n";
+    cout << endl;
+    deleteStack(&pathStack);
 }
