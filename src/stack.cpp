@@ -29,36 +29,26 @@ void deleteStack(pSTACK* stack) {
     }
 }
 
-void printPath(pGRAPH graph, int src, int dest) {
-    // Check if there is no path to the destination
+void printPath(pGRAPH graph,int src,int dest) {
     if (graph->V[dest]->key == DBL_MAX || graph->V[dest]->parentIndex == -1) {
-        cout << "There is no path from " << src << " to " << dest << "." << endl;
+        cout << "There is no path from " <<
+         src << " to " << dest << "." << endl;
         return;
     }
-
-    // Use a stack to reconstruct the path
     pSTACK pathStack = nullptr;
     int curr = dest;
     while (curr != -1) {
-        push(&pathStack, graph->V[curr]);
+        push(&pathStack,graph->V[curr]);
         curr = graph->V[curr]->parentIndex;
     }
-
-    // Print the path header
-    printf("The shortest path from %d to %d is: ", src, dest);
-
-    // Print the path with weights
+    printf("The shortest path from %d to %d is:\n",src,dest);
     while (pathStack != nullptr) {
         pVERTEX v = pop(&pathStack);
-        printf("[%d:%8.2lf]", v->index, v->key);
+        printf("[%d:%8.2lf]",v->index,v->key);
         if (pathStack != nullptr) {
             printf("-->");
         }
     }
-
-    // Add the required period at the end of the output
     cout << "." << endl;
-
-    // Clean up the stack
     deleteStack(&pathStack);
 }
