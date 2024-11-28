@@ -6,6 +6,7 @@ typedef struct TAG_VERTEX {
     int parentIndex;
     int pos;
     double key;
+    int pi;
 }
 VERTEX;
 typedef VERTEX *pVERTEX;
