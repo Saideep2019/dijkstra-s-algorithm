@@ -1,3 +1,5 @@
+//Saideep Ambari
+//1227110055
 #include <iostream>
 #include <fstream>
 #include "graph.h"
@@ -36,30 +38,30 @@ int main(int argc,char* argv[]) {
 }
 
 void getInstructions(pGRAPH graph) {
-    string instruction;
+    string instr;
     int src, dest;
     int lastSrc = -1;
     int lastDest = -1;
-    while (cin >> instruction) {
-        if (instruction == "Stop") {
+    while (cin >> instr) {
+        if (instr == "Stop") {
             break;
         }
-        else if (instruction == "PrintADJ") {
+        else if (instr == "PrintADJ") {
             printAdjList(graph);
         }
-        else if (instruction == "SinglePair") {
+        else if (instr == "SinglePair") {
             cin >> src >> dest;
-            singlePairShortestPath(graph,src,dest);
+            singlePair(graph,src,dest);
             lastSrc = src;
             lastDest = dest;
         }
-        else if (instruction == "SingleSource") {
+        else if (instr == "SingleSource") {
             cin >> src;
-            singleSourceShortestPath(graph,src);
+            singleSource(graph,src);
             lastSrc = src;
             lastDest = -1;
         }
-        else if (instruction == "PrintLength") {
+        else if (instr == "PrintLength") {
             cin >> src >> dest;
             if (lastSrc == src && (lastDest == dest || lastDest == -1)) {
                 if (graph->V[dest]->key == DBL_MAX) {
@@ -74,7 +76,7 @@ void getInstructions(pGRAPH graph) {
                 cout << "There is no path from " << src << " to " << dest << "." << endl;
             }
         }
-        else if (instruction == "PrintPath") {
+        else if (instr == "PrintPath") {
             cin >> src >> dest;
             if (lastSrc == src && (dest == lastDest || lastDest == -1)) {
                 printPath(graph,src,dest);

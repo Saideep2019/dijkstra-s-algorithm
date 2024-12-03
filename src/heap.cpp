@@ -1,14 +1,31 @@
+//Saideep Ambari
+//1227110055
 #include "heap.h"
 #include <iostream>
 using namespace std;
 
-void swap(pHEAP heap,int i,int j) {
-    pELEMENT temp = heap->H[i];
-    heap->H[i] = heap->H[j];
-    heap->H[j] = temp;
-    heap->H[i]->pos = i;
-    heap->H[j]->pos = j;
+void swap(pHEAP heapInitialization,int i,int j) {
+    pELEMENT temp = heapInitialization->H[i];
+    heapInitialization->H[i] = heapInitialization->H[j];
+    heapInitialization->H[j] = temp;
+    heapInitialization->H[i]->pos = i;
+    heapInitialization->H[j]->pos = j;
 }
+
+
+void decreaseKey(pHEAP heapInitialization,int pos,double newKey) {
+    if (newKey > heapInitialization->H[pos]->key) {
+        cerr << "Error: New key is bigger than current key" << endl;
+        return;
+    }
+    heapInitialization->H[pos]->key = newKey;
+    int i = pos;
+    while (i > 1 && heapInitialization->H[i/2]->key > heapInitialization->H[i]->key) {
+        swap(heapInitialization,i,i / 2);
+        i = i / 2;
+    }
+}
+
 
 pHEAP createHeap(int capacity) {
     pHEAP heap = new HEAP;
@@ -18,65 +35,57 @@ pHEAP createHeap(int capacity) {
     return heap;
 }
 
-void heapify(pHEAP heap,int i) {
+
+
+void insert(pHEAP heapInitialization,pELEMENT element) {
+    if (heapInitialization->size == heapInitialization->capacity) {
+        cerr << "Error: Heap overflow detected" << endl;
+        return;
+    }
+    heapInitialization->size++;
+    int i = heapInitialization->size;
+    heapInitialization->H[i] = element;
+    element->pos = i;
+    while (i > 1 && heapInitialization->H[i/2]->key > heapInitialization->H[i]->key) {
+        swap(heapInitialization,i,i / 2);
+        i = i / 2;
+    }
+}
+
+
+
+
+void heapify(pHEAP heapInitialization,int i) {
     int min = i;
     int left = 2 * i;
     int right = 2 * i + 1;
 
-    if (left <= heap->size && heap->H[left]->key < heap->H[min]->key) {
+    if (left <= heapInitialization->size && heapInitialization->H[left]->key < heapInitialization->H[min]->key) {
         min = left;
     }
-    if (right <= heap->size && heap->H[right]->key < heap->H[min]->key) {
+    if (right <= heapInitialization->size && heapInitialization->H[right]->key < heapInitialization->H[min]->key) {
         min = right;
     }
     if (min != i) {
-        swap(heap,i,min);
-        heapify(heap,min);
+        swap(heapInitialization,i,min);
+        heapify(heapInitialization,min);
     }
 }
 
-void insert(pHEAP heap,pELEMENT element) {
-    if (heap->size == heap->capacity) {
-        cerr << "Error: Heap overflow detected" << endl;
-        return;
-    }
-    heap->size++;
-    int i = heap->size;
-    heap->H[i] = element;
-    element->pos = i;
-    while (i > 1 && heap->H[i/2]->key > heap->H[i]->key) {
-        swap(heap,i,i / 2);
-        i = i / 2;
-    }
-}
-
-void decreaseKey(pHEAP heap,int pos,double newKey) {
-    if (newKey > heap->H[pos]->key) {
-        cerr << "Error: New key is bigger than current key" << endl;
-        return;
-    }
-    heap->H[pos]->key = newKey;
-    int i = pos;
-    while (i > 1 && heap->H[i/2]->key > heap->H[i]->key) {
-        swap(heap,i,i / 2);
-        i = i / 2;
-    }
-}
-
-pVERTEX extractMin(pHEAP heap) {
-    if (heap->size < 1) {
+pVERTEX extractMin(pHEAP heapInitialization) {
+    if (heapInitialization->size < 1) {
         cerr << "Error: Heap overflow detected" << endl;
         return nullptr;
     }
-    pVERTEX min = heap->H[1];
-    heap->H[1] = heap->H[heap->size];
-    heap->H[1]->pos = 1;
-    heap->size--;
-    heapify(heap,1);
+    pVERTEX min = heapInitialization->H[1];
+    heapInitialization->H[1] = heapInitialization->H[heapInitialization->size];
+    heapInitialization->H[1]->pos = 1;
+    heapInitialization->size--;
+    heapify(heapInitialization,1);
     return min;
 }
 
-void deleteHeap(pHEAP heap) {
-    delete[] heap->H;
-    delete heap;
+void deleteHeap(pHEAP heapInitialization) {
+    delete[] heapInitialization->H;
+    delete heapInitialization;
 }

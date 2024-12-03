@@ -1,3 +1,5 @@
+//Saideep Ambari
+//1227110055
 #include "stack.h"
 #include <iostream>
 #include <cfloat>
@@ -7,30 +9,30 @@ pSTACK createStack() {
     return nullptr;
 }
 
-void push(pSTACK* stack,pVERTEX vertex) {
+void push(pSTACK* stackInitialization,pVERTEX vertex) {
     pSTACK node = new STACK;
     node->vertex = vertex;
-    node->next = *stack;
-    *stack = node;
+    node->next = *stackInitialization;
+    *stackInitialization = node;
 }
 
-pVERTEX pop(pSTACK* stack) {
-    if (*stack == nullptr) return nullptr;
-    pSTACK tmp = *stack;
+pVERTEX pop(pSTACK* stackInitialization) {
+    if (*stackInitialization == nullptr) return nullptr;
+    pSTACK tmp = *stackInitialization;
     pVERTEX vertex = tmp->vertex;
-    *stack = (*stack)->next;
+    *stackInitialization = (*stackInitialization)->next;
     delete tmp;
     return vertex;
 }
 
-void deleteStack(pSTACK* stack) {
-    while (*stack) {
-        pop(stack);
+void deleteStack(pSTACK* stackInitialization) {
+    while (*stackInitialization) {
+        pop(stackInitialization);
     }
 }
 
-void printPath(pGRAPH graph,int src,int dest) {
-    if (graph->V[dest]->key == DBL_MAX || graph->V[dest]->parentIndex == -1) {
+void printPath(pGRAPH graphInitialization,int src,int dest) {
+    if (graphInitialization->V[dest]->key == DBL_MAX || graphInitialization->V[dest]->parentIndex == -1) {
         cout << "There is no path from " <<
          src << " to " << dest << "." << endl;
         return;
@@ -38,8 +40,8 @@ void printPath(pGRAPH graph,int src,int dest) {
     pSTACK pathStack = nullptr;
     int curr = dest;
     while (curr != -1) {
-        push(&pathStack,graph->V[curr]);
-        curr = graph->V[curr]->parentIndex;
+        push(&pathStack,graphInitialization->V[curr]);
+        curr = graphInitialization->V[curr]->parentIndex;
     }
     printf("The shortest path from %d to %d is:\n",src,dest);
     while (pathStack != nullptr) {

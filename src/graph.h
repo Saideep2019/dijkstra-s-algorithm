@@ -1,3 +1,5 @@
+//Saideep Ambari
+//1227110055
 #ifndef GRAPH_H
 #define GRAPH_H
 
@@ -20,10 +22,10 @@ void initSingleSource(pGRAPH graph, int src);
 void relax(pGRAPH graph, pHEAP heap, int u, int v, double w);
 
 // Function to compute the shortest path from a single source to a single destination
-void singlePairShortestPath(pGRAPH graph, int src, int dest);
+void singlePair(pGRAPH graph, int src, int dest);
 
 // Function to compute the shortest paths from a single source to all other vertices
-void singleSourceShortestPath(pGRAPH graph, int src);
+void singleSource(pGRAPH graph, int src);
 
 // Function to delete the graph and free allocated memory
 void deleteGraph(pGRAPH graph);
